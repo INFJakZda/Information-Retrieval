@@ -10,7 +10,25 @@ from html.parser import HTMLParser
 #-------------------------------------------------------------------------
 ### generatePolicy classes
 
-  
+# Last in First out Policy
+class LIFO_Policy:
+    def __init__(self, c):
+        self.queue = [s for s in c.seedURLs]
+    
+    def getURL(self, c, iteration):
+        if( len(self.queue) == 0 ):
+            return None
+        else:
+            url = self.queue[-1]
+            self.queue.pop(-1)
+            return url
+
+    def updateURLs(self, c, newURLs, newURLsWD, iteration):
+        tmpList = [url for url in newURLs]
+        tmpList.sort(key = lambda url:url[len(url) - url[::-1].index('/'):])
+        for url in tmpList:
+            self.queue.append(url)
+
 # Dummy fetch policy. Returns first element. Does nothing ;)
 class Dummy_Policy:
     def getURL(self, c, iteration):
@@ -51,11 +69,11 @@ class Container:
          # Incoming URLs (to <- from; set of incoming links)
         self.incomingURLs = {}
         # Class which maintains a queue of urls to visit. 
-        self.generatePolicy = Dummy_Policy()
+        self.generatePolicy = LIFO_Policy(self)
         # Page (URL) to be fetched next
         self.toFetch = None
         # Number of iterations of a crawler. 
-        self.iterations = 3
+        self.iterations = 10
 
         # If true: store all crawled html pages in the provided directory.
         self.storePages = True
