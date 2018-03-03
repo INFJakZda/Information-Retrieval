@@ -209,17 +209,17 @@ def fetch(c):
         return None 
         
 #-------------------------------------------------------------------------  
-# Remove wrong URL (TODO)
+# Remove wrong URL (DONE)
 def removeWrongURL(c):
     if c.toFetch in c.URLs:
         c.URLs.remove(c.toFetch)
         
 #-------------------------------------------------------------------------  
-# Parse this page and retrieve text (whole page) and URLs (TODO)
+# Parse this page and retrieve text (whole page) and URLs (DONE)
 def parse(c, page, iteration):
     # data to be saved (DONE)
     htmlData = page.read()
-    # obtained URLs (TODO)
+    # obtained URLs (DONE)
     p = Parser()
     p.feed(str(htmlData))
     
@@ -233,10 +233,11 @@ def parse(c, page, iteration):
 #-------------------------------------------------------------------------  
 # Normalise newly obtained links (TODO)
 def getNormalisedURLs(newURLs):
-    return newURLs
+    toLeft = set([url.lower() for url in newURLs])
+    return toLeft
     
 #-------------------------------------------------------------------------  
-# Remove duplicates (duplicates) (TODO)
+# Remove duplicates (duplicates) (Done)
 def removeDuplicates(c, newURLs):
     URLs = set( [url for url in newURLs if url not in c.URLs] )
     if c.debug:
@@ -244,12 +245,13 @@ def removeDuplicates(c, newURLs):
     return URLs
 
 #-------------------------------------------------------------------------  
-# Filter out some URLs (TODO)
+# Filter out some URLs (Done)
 def getFilteredURLs(c, newURLs):
     toLeft = set([url for url in newURLs if url.lower().startswith(c.rootPage)])
     if c.debug:
         print("   Filtered out " + str(len(newURLs) - len(toLeft)) + " urls")  
-    return toLeft
+    toLeftNew = set([ url for url in toLeft if url not in c.toFetch])
+    return toLeftNew
     
 #-------------------------------------------------------------------------  
 # Store HTML pages (DONE)  
