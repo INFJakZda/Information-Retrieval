@@ -30,6 +30,31 @@ class LIFO_Policy:
         for url in tmpList:
             self.queue.append(url)
 
+# Last in First out Policy with cycle detect - DFS
+class LIFO_Cycle_Policy:
+    def __init__(self, c):
+        self.queue = [s for s in c.seedURLs]
+        self.fetched = set([])
+    
+    def getURL(self, c, iteration):
+        while True:
+            if( len(self.queue) == 0 ):
+                self.queue = [s for s in c.seedURLs]
+                self.fetched.clear()
+                url = self.queue.pop(-1)
+                self.fetched.add(url)
+                return url
+            url = self.queue.pop(-1)
+            if url not in self.fetched:
+                self.fetched.add(url)
+                return url
+
+    def updateURLs(self, c, newURLs, newURLsWD, iteration):
+        tmpList = [url for url in newURLs]
+        tmpList.sort(key = lambda url:url[len(url) - url[::-1].index('/'):])
+        for url in tmpList:
+            self.queue.append(url)
+
 # First in last out Policy - BFS
 class FIFO_Policy:
     def __init__(self, c):
@@ -77,7 +102,7 @@ class Container:
         # The name of the crawler"
         self.crawlerName = "IRbot"
         # Example ID
-        self.example = "exercise1"
+        self.example = "exercise2"
         # Root (host) page
         self.rootPage = "http://www.cs.put.poznan.pl/mtomczyk/ir/lab1/" + self.example
         # Initial links to visit
@@ -90,7 +115,7 @@ class Container:
          # Incoming URLs (to <- from; set of incoming links)
         self.incomingURLs = {}
         # Class which maintains a queue of urls to visit. 
-        self.generatePolicy = LIFO_Policy(self)
+        self.generatePolicy = LIFO_Cycle_Policy(self)
         # Page (URL) to be fetched next
         self.toFetch = None
         # Number of iterations of a crawler. 
