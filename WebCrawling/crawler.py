@@ -10,24 +10,45 @@ from html.parser import HTMLParser
 #-------------------------------------------------------------------------
 ### generatePolicy classes
 
-# Last in First out Policy
+# Last in First out Policy - DFS
 class LIFO_Policy:
     def __init__(self, c):
         self.queue = [s for s in c.seedURLs]
     
     def getURL(self, c, iteration):
         if( len(self.queue) == 0 ):
-            return None
-        else:
-            url = self.queue[-1]
-            self.queue.pop(-1)
-            return url
+            #return None
+            self.queue = [s for s in c.seedURLs]
+        
+        url = self.queue[-1]
+        self.queue.pop(-1)
+        return url
 
     def updateURLs(self, c, newURLs, newURLsWD, iteration):
         tmpList = [url for url in newURLs]
         tmpList.sort(key = lambda url:url[len(url) - url[::-1].index('/'):])
         for url in tmpList:
             self.queue.append(url)
+
+# First in last out Policy - BFS
+class FIFO_Policy:
+    def __init__(self, c):
+        self.queue = [s for s in c.seedURLs]
+    
+    def getURL(self, c, iteration):
+        if( len(self.queue) == 0 ):
+            #return None
+            self.queue = [s for s in c.seedURLs]
+    
+        url = self.queue[0]
+        self.queue.pop(0)
+        return url
+            
+    def updateURLs(self, c, newURLs, newURLsWD, iteration):
+        tmpList = [url for url in newURLs]
+        tmpList.sort(key = lambda url:url[len(url) - url[::-1].index('/'):])
+        for url in tmpList:
+            self.queue.append(url) 
 
 # Dummy fetch policy. Returns first element. Does nothing ;)
 class Dummy_Policy:
@@ -231,7 +252,7 @@ def parse(c, page, iteration):
     return htmlData, newURLs
 
 #-------------------------------------------------------------------------  
-# Normalise newly obtained links (TODO)
+# Normalise newly obtained links (Done)
 def getNormalisedURLs(newURLs):
     toLeft = set([url.lower() for url in newURLs])
     return toLeft
