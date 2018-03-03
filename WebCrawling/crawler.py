@@ -5,7 +5,7 @@
 import urllib.request as req
 import sys
 import os
-
+from html.parser import HTMLParser
       
 #-------------------------------------------------------------------------
 ### generatePolicy classes
@@ -22,7 +22,15 @@ class Dummy_Policy:
     def updateURLs(self, c, newURLs, newURLsWD, iteration):
         pass
         
-    
+# Extract all links form the downloaded page
+class Parser(HTMLParser):
+    def __init__(self):
+        HTMLParser.__init__(self)
+        self.output_list = []
+    def handle_starttag(self, tag, attrs):
+        if tag == ‘a’:
+            self.output_list.append(dict(attrs).get(‘href’))
+
 #-------------------------------------------------------------------------
 # Data container
 class Container:
@@ -194,7 +202,11 @@ def parse(c, page, iteration):
     # data to be saved (DONE)
     htmlData = page.read()
     # obtained URLs (TODO)
-    newURLs = set([])
+    p = Parser()
+    p.feed(str(htmlData))
+    
+    newURLs = set([s for s in p.output_list])
+    
     if c.debug:
         print("   Extracted " + str(len(newURLs)) + " links")
 
