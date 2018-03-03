@@ -1,5 +1,3 @@
-# Author: Michal Tomczyk
-# michal.tomczyk@cs.put.poznan.pl
 # Poznan University of Technology
 # Institute of Computing Science
 # Laboratory of Intelligent Decision Support Systems
