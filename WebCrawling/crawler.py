@@ -9,7 +9,7 @@ from html.parser import HTMLParser
       
 #-------------------------------------------------------------------------
 ### generatePolicy classes
-  
+
   
 # Dummy fetch policy. Returns first element. Does nothing ;)
 class Dummy_Policy:
@@ -28,8 +28,8 @@ class Parser(HTMLParser):
         HTMLParser.__init__(self)
         self.output_list = []
     def handle_starttag(self, tag, attrs):
-        if tag == ‘a’:
-            self.output_list.append(dict(attrs).get(‘href’))
+        if tag == 'a':
+            self.output_list.append(dict(attrs).get('href'))
 
 #-------------------------------------------------------------------------
 # Data container
@@ -193,9 +193,9 @@ def fetch(c):
 #-------------------------------------------------------------------------  
 # Remove wrong URL (TODO)
 def removeWrongURL(c):
-    #TODO
-    pass
-    
+    if c.toFetch in c.URLs:
+        c.URLs.remove(c.toFetch)
+        
 #-------------------------------------------------------------------------  
 # Parse this page and retrieve text (whole page) and URLs (TODO)
 def parse(c, page, iteration):
@@ -220,8 +220,10 @@ def getNormalisedURLs(newURLs):
 #-------------------------------------------------------------------------  
 # Remove duplicates (duplicates) (TODO)
 def removeDuplicates(c, newURLs):
-    # TODO
-    return newURLs
+    URLs = set( [url for url in newURLs if url not in c.URLs] )
+    if c.debug:
+        print("   Removed " + str(len(newURLs) - len(URLs)) + " urls")  
+    return URLs
 
 #-------------------------------------------------------------------------  
 # Filter out some URLs (TODO)
