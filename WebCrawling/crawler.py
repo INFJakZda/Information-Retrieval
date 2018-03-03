@@ -39,6 +39,8 @@ class LIFO_Cycle_Policy:
     def getURL(self, c, iteration):
         while True:
             if( len(self.queue) == 0 ):
+                print("DEBAG_______________________")
+                print( c.incomingURLs )
                 self.queue = [s for s in c.seedURLs]
                 self.fetched.clear()
                 url = self.queue.pop(-1)
@@ -54,6 +56,45 @@ class LIFO_Cycle_Policy:
         tmpList.sort(key = lambda url:url[len(url) - url[::-1].index('/'):])
         for url in tmpList:
             self.queue.append(url)
+
+# Last in First out Policy with authority oriented pages - DFS
+class LIFO_Authority_Policy:
+    def __init__(self, c):
+        self.queue = [s for s in c.seedURLs]
+        self.fetched = set([])
+        self.authorityLevel = {}
+    
+    def getURL(self, c, iteration):
+        while True:
+            if( len(self.queue) == 0 ):
+                if( len(self.authorityLevel) == 0 ):
+                    print("DEBAG_______________________")
+                    for url in c.incomingURLs:
+                        i = 2
+                        for link in c.incomingURLs[url]:
+                            self.authorityLevel[url] = i
+                            i += 1
+                            print(link)
+                            print("******")
+                        print("DEBAG_______________________")
+                    for k, v in self.authorityLevel.items():
+                        print(k, v)
+                self.queue = [s for s in c.seedURLs]
+                self.fetched.clear()
+                url = self.queue.pop(-1)
+                self.fetched.add(url)
+                return url
+            url = self.queue.pop(-1)
+            if url not in self.fetched:
+                self.fetched.add(url)
+                return url
+
+    def updateURLs(self, c, newURLs, newURLsWD, iteration):
+        tmpList = [url for url in newURLs]
+        tmpList.sort(key = lambda url:url[len(url) - url[::-1].index('/'):])
+        for url in tmpList:
+            self.queue.append(url)
+
 
 # First in last out Policy - BFS
 class FIFO_Policy:
@@ -102,7 +143,7 @@ class Container:
         # The name of the crawler"
         self.crawlerName = "IRbot"
         # Example ID
-        self.example = "exercise2"
+        self.example = "exercise3"
         # Root (host) page
         self.rootPage = "http://www.cs.put.poznan.pl/mtomczyk/ir/lab1/" + self.example
         # Initial links to visit
@@ -115,7 +156,7 @@ class Container:
          # Incoming URLs (to <- from; set of incoming links)
         self.incomingURLs = {}
         # Class which maintains a queue of urls to visit. 
-        self.generatePolicy = LIFO_Cycle_Policy(self)
+        self.generatePolicy = LIFO_Authority_Policy(self)
         # Page (URL) to be fetched next
         self.toFetch = None
         # Number of iterations of a crawler. 
@@ -137,7 +178,7 @@ class Container:
         
         
         # If True: debug
-        self.debug = True 
+        self.debug = False 
         
 def main():
 
