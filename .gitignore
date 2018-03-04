@@ -1,2 +1,5 @@
 exercise*
 Lab*
+.idea
+*.iml
+*.jar
