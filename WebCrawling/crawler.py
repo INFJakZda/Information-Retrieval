@@ -5,6 +5,7 @@
 import urllib.request as req
 import sys
 import os
+import random
 from html.parser import HTMLParser
       
 #-------------------------------------------------------------------------
@@ -65,29 +66,28 @@ class LIFO_Authority_Policy:
         self.authorityLevel = {}
     
     def getURL(self, c, iteration):
-        while True:
-            if( len(self.queue) == 0 ):
-                if( len(self.authorityLevel) == 0 ):
-                    print("DEBAG_______________________")
-                    for url in c.incomingURLs:
-                        i = 2
+        if( len(self.queue) == 0 ):     
+            if( len(self.authorityLevel) == 0 ):
+                #loop for on all URLs
+                for url in self.fetched:
+                    self.authorityLevel[url] = 1
+                    i = 2
+                    if url in c.incomingURLs:
                         for link in c.incomingURLs[url]:
                             self.authorityLevel[url] = i
                             i += 1
-                            print(link)
-                            print("******")
-                        print("DEBAG_______________________")
-                    for k, v in self.authorityLevel.items():
-                        print(k, v)
-                self.queue = [s for s in c.seedURLs]
-                self.fetched.clear()
-                url = self.queue.pop(-1)
-                self.fetched.add(url)
-                return url
-            url = self.queue.pop(-1)
-            if url not in self.fetched:
-                self.fetched.add(url)
-                return url
+
+            for url, nr in self.authorityLevel.items():
+                for i in range(nr):
+                    self.queue.append(url)
+        
+        index = random.randrange(len(self.queue))
+        url = self.queue.pop(index)
+        
+        if url not in self.fetched:
+            self.fetched.add(url)
+            
+        return url
 
     def updateURLs(self, c, newURLs, newURLsWD, iteration):
         tmpList = [url for url in newURLs]
@@ -160,7 +160,7 @@ class Container:
         # Page (URL) to be fetched next
         self.toFetch = None
         # Number of iterations of a crawler. 
-        self.iterations = 10
+        self.iterations = 50
 
         # If true: store all crawled html pages in the provided directory.
         self.storePages = True
@@ -256,7 +256,10 @@ def main():
     if c.storeOutgoingURLs:
         storeOutgoingURLs(c)
     if c.storeIncomingURLs:
-        storeIncomingURLs(c)            
+        storeIncomingURLs(c)
+    
+    print("******************")
+    print(collections.Counter(urlList))            
     
 
 #-------------------------------------------------------------------------
