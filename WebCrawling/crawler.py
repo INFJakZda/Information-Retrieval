@@ -40,8 +40,6 @@ class LIFO_Cycle_Policy:
     def getURL(self, c, iteration):
         while True:
             if( len(self.queue) == 0 ):
-                print("DEBAG_______________________")
-                print( c.incomingURLs )
                 self.queue = [s for s in c.seedURLs]
                 self.fetched.clear()
                 url = self.queue.pop(-1)
