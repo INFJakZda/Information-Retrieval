@@ -1,10 +1,22 @@
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.tika.exception.TikaException;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class main1
 {
@@ -32,7 +44,40 @@ public class main1
         System.out.println("Running exercise 1a...");
         LinkedList <String> results = new LinkedList <>();
 
-        // TODO
+        ZipFile file = new ZipFile("Exercise1.zip");
+        Enumeration entries = file.entries();
+        while(entries.hasMoreElements())
+        {
+            ZipEntry entry = (ZipEntry) entries.nextElement();
+            InputStream stream = file.getInputStream(entry);
+
+            String fileName = entry.getName();
+
+            if(fileName.endsWith("pdf")) {
+                PDDocument pdf = PDDocument.load(stream);
+                PDFTextStripper stripper = new PDFTextStripper();
+                String content = stripper.getText(pdf);
+
+                Pattern pattern = Pattern.compile("\\([0-9]{3}\\) ?[0-9-]+");
+                Matcher matcher = pattern.matcher(content);
+                while (matcher.find()) {
+                    String number = matcher.group().replace(" ", "");
+                    results.add(number);
+                }
+                pdf.close();
+            }
+            else if(fileName.endsWith("xml")) {
+                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                DocumentBuilder db = dbf.newDocumentBuilder();
+                Document document = db.parse(stream);
+
+                NodeList nodeList = document.getElementsByTagName("Phone");
+                int length = nodeList.getLength();
+                for (int i = 0; i < nodeList.getLength(); i++) {
+                    results.add(nodeList.item(i).getTextContent());
+                }
+            }
+        }
 
         return results;
     }
