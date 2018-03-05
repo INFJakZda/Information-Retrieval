@@ -1,6 +1,10 @@
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.tika.exception.TikaException;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.AutoDetectParser;
+import org.apache.tika.sax.BodyContentHandler;
+import org.apache.tika.sax.PhoneExtractingContentHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -35,7 +39,7 @@ public class main1
 
         LinkedList <String> phonesByTika = exercise1b();
         System.out.println("Results of Tika:");
-        //printResults(phonesByTika);
+        printResults(phonesByTika);
     }
 
 
@@ -46,6 +50,7 @@ public class main1
 
         ZipFile file = new ZipFile("Exercise1.zip");
         Enumeration entries = file.entries();
+
         while(entries.hasMoreElements())
         {
             ZipEntry entry = (ZipEntry) entries.nextElement();
@@ -74,6 +79,7 @@ public class main1
                 NodeList nodeList = document.getElementsByTagName("Phone");
                 int length = nodeList.getLength();
                 for (int i = 0; i < nodeList.getLength(); i++) {
+
                     results.add(nodeList.item(i).getTextContent());
                 }
             }
@@ -86,8 +92,25 @@ public class main1
     {
         System.out.println("Running exercise 1b...");
         LinkedList <String> results = new LinkedList <>();
-        // TODO
 
+        ZipFile file = new ZipFile("Exercise1.zip");
+        Enumeration entries = file.entries();
+
+        while(entries.hasMoreElements()) {
+            ZipEntry entry = (ZipEntry) entries.nextElement();
+            InputStream stream = file.getInputStream(entry);
+            //String fileName = entry.getName();
+
+            AutoDetectParser parser = new AutoDetectParser();
+            Metadata metadata = new Metadata();
+            PhoneExtractingContentHandler handler = new PhoneExtractingContentHandler(new BodyContentHandler(), metadata);
+            parser.parse(stream, handler, metadata);
+            String[] values = metadata.getValues("phonenumbers");
+            int length = values.length;
+            for(int i = 0; i < length; i++) {
+                results.add(values[i]);
+            }
+        }
         return new LinkedList <>(results);
     }
 

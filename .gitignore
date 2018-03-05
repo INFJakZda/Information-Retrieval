@@ -3,3 +3,4 @@ Lab*
 .idea
 *.iml
 *.jar
+out/
