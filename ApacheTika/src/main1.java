@@ -104,7 +104,9 @@ public class main1
             AutoDetectParser parser = new AutoDetectParser();
             Metadata metadata = new Metadata();
             PhoneExtractingContentHandler handler = new PhoneExtractingContentHandler(new BodyContentHandler(), metadata);
+
             parser.parse(stream, handler, metadata);
+
             String[] values = metadata.getValues("phonenumbers");
             int length = values.length;
             for(int i = 0; i < length; i++) {

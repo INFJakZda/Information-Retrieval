@@ -6,14 +6,17 @@ import java.util.Date;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.langdetect.OptimaizeLangDetector;
-import org.apache.tika.language.detect.LanguageDetector;
 import org.apache.tika.language.detect.LanguageResult;
 import org.apache.tika.metadata.Metadata;
+import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.BodyContentHandler;
-import org.apache.tika.sax.PhoneExtractingContentHandler;
 import org.xml.sax.SAXException;
+
+import javax.activation.MimetypesFileTypeMap;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 public class main2
 {
@@ -71,7 +74,13 @@ public class main2
         LanguageResult result = langDetector.loadModels().detect(handler.toString());
         System.out.println(result.getLanguage());
 
-        saveResult(file.getName(), result.getLanguage(), null, null, null, null, null); //TODO: fill with proper values
+        String creatorName = metadata.get(TikaCoreProperties.CREATOR);
+        Date creationDate = metadata.getDate(TikaCoreProperties.CREATED);
+        Date lastModification = metadata.getDate(TikaCoreProperties.MODIFIED);
+        //String mimeType = metadata.get(TikaCoreProperties.TYPE);
+        String mimeType = new MimetypesFileTypeMap().getContentType(file);
+
+        saveResult(file.getName(), result.getLanguage(), creatorName, creationDate, lastModification, mimeType, handler.toString()); //TODO: fill with proper values
     }
 
     private void saveResult(String fileName, String language, String creatorName, Date creationDate,
