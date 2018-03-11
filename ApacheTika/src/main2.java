@@ -72,7 +72,7 @@ public class main2
         parser.parse(stream, handler, metadata, new ParseContext());
 
         LanguageResult result = langDetector.loadModels().detect(handler.toString());
-        System.out.println(result.getLanguage());
+        //System.out.println(result.getLanguage());
 
         String creatorName = metadata.get(TikaCoreProperties.CREATOR);
         Date creationDate = metadata.getDate(TikaCoreProperties.CREATED);
