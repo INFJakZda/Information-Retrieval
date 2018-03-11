@@ -4,3 +4,6 @@ Lab*
 *.iml
 *.jar
 out/
+document/
+models/
+out*/

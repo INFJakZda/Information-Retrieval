@@ -1,7 +1,24 @@
+import opennlp.tools.chunker.ChunkerME;
+import opennlp.tools.chunker.ChunkerModel;
+import opennlp.tools.langdetect.Language;
+import opennlp.tools.langdetect.LanguageDetectorME;
 import opennlp.tools.langdetect.LanguageDetectorModel;
-
+import opennlp.tools.lemmatizer.DictionaryLemmatizer;
+import opennlp.tools.namefind.NameFinderME;
+import opennlp.tools.namefind.TokenNameFinderModel;
+import opennlp.tools.postag.POSModel;
+import opennlp.tools.postag.POSTaggerME;
+import opennlp.tools.sentdetect.SentenceDetectorME;
+import opennlp.tools.sentdetect.SentenceModel;
+import opennlp.tools.stemmer.PorterStemmer;
+import opennlp.tools.tokenize.TokenizerME;
+import opennlp.tools.tokenize.TokenizerModel;
+import opennlp.tools.util.Span;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class OpenNLP {
 
@@ -37,12 +54,12 @@ public class OpenNLP {
     {
 		File modelFile = new File(LANG_DETECT_MODEL);
 		LanguageDetectorModel model = new LanguageDetectorModel(modelFile);
+		LanguageDetectorME detector = new LanguageDetectorME(model);
 
 		String text = "";
-		text = "cats";
+		//text = "cats";
 		// text = "cats like milk";
-		// text = "Many cats like milk because in some ways it reminds them of their
-		// mother's milk.";
+		 text = "Many cats like milk because in some ways it reminds them of their mother's milk.";
 		// text = "The two things are not really related. Many cats like milk because in
 		// some ways it reminds them of their mother's milk.";
 		/*text = "The two things are not really related. Many cats like milk because in some ways it reminds them of their mother's milk. "
@@ -56,7 +73,10 @@ public class OpenNLP {
 		// mother's milk. Le lait n'est pas forc�ment mauvais pour les chats. "
 		// + "Der Normalfall ist allerdings der, dass Salonl�wen Milch weder brauchen
 		// noch gut verdauen k�nnen.";
-	}
+        Language lang;
+        lang = detector.predictLanguage(text);
+        System.out.println(lang.getLang());
+    }
 
 	private void tokenization() throws IOException
     {
