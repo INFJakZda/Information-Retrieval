@@ -42,9 +42,9 @@ public class OpenNLP {
     {
 
 		// languageDetection();
-		tokenization();
+		// tokenization();
         // sentenceDetection();
-		// posTagging();
+		posTagging();
 		// lemmatization();
 		// stemming();
 		// chunking();
@@ -53,8 +53,7 @@ public class OpenNLP {
 
 	private void languageDetection() throws IOException
     {
-		//File modelFile = new File(LANG_DETECT_MODEL);
-        File modelFile = new File(TOKENIZER_DE_MODEL);
+		File modelFile = new File(LANG_DETECT_MODEL);
 		LanguageDetectorModel model = new LanguageDetectorModel(modelFile);
 		LanguageDetectorME detector = new LanguageDetectorME(model);
 
@@ -85,6 +84,7 @@ public class OpenNLP {
 	private void tokenization() throws IOException
     {
         File modelFile = new File(TOKENIZER_MODEL);
+        //File modelFile = new File(TOKENIZER_DE_MODEL);
         TokenizerModel model = new TokenizerModel(modelFile);
         TokenizerME token = new TokenizerME(model);
 
@@ -106,6 +106,10 @@ public class OpenNLP {
 
 	private void sentenceDetection() throws IOException
     {
+        File modelFile = new File(SENTENCE_MODEL);
+        SentenceModel model = new SentenceModel(modelFile);
+        SentenceDetectorME detectorME = new SentenceDetectorME(model);
+
 		String text = "";
 		text = "Hi. How are you? Welcome to OpenNLP. "
 				+ "We provide multiple built-in methods for Natural Language Processing.";
@@ -117,16 +121,29 @@ public class OpenNLP {
 				+ "is a nonstandard punctuation mark used in various written languages. "
 				+ "It is intended to combine the functions of the question mark (?), or interrogative point, "
 				+ "and the exclamation mark (!), or exclamation point, known in the jargon of printers and programmers as a \"bang\". ";*/
-
+        String[] sentences = detectorME.sentDetect(text);
+        double[] propabs = detectorME.getSentenceProbabilities();
+        for(int i = 0; i < sentences.length; i++) {
+            System.out.println(sentences[i] + " " + propabs[i]);
+        }
 	}
 
 	private void posTagging() throws IOException {
+        File modelFile = new File(POS_MODEL);
+        POSModel model = new POSModel(modelFile);
+        POSTaggerME taggerME = new POSTaggerME(model);
+
 		String[] sentence = new String[0];
 		sentence = new String[] { "Cats", "like", "milk" };
 		/*sentence = new String[]{"Cat", "is", "white", "like", "milk"};
 		sentence = new String[] { "Hi", "How", "are", "you", "Welcome", "to", "OpenNLP", "We", "provide", "multiple",
 				"built-in", "methods", "for", "Natural", "Language", "Processing" };
 		sentence = new String[] { "She", "put", "the", "big", "knives", "on", "the", "table" };*/
+        String[] sentences = taggerME.tag(sentence);
+        double[] propabs = taggerME.probs();
+        for(int i = 0; i < sentences.length; i++) {
+            System.out.println(sentences[i] + " " + propabs[i]);
+        }
 	}
 
 	private void lemmatization() throws IOException
