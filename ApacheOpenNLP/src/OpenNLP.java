@@ -24,6 +24,7 @@ public class OpenNLP {
 
     public static String LANG_DETECT_MODEL = "models/langdetect-183.bin";
     public static String TOKENIZER_MODEL = "models/en-token.bin";
+    public static String TOKENIZER_DE_MODEL = "models/de-token.bin";
     public static String SENTENCE_MODEL = "models/en-sent.bin";
     public static String POS_MODEL = "models/en-pos-maxent.bin";
     public static String CHUNKER_MODEL = "models/en-chunker.bin";
@@ -40,8 +41,8 @@ public class OpenNLP {
 	public void run() throws IOException
     {
 
-		languageDetection();
-		// tokenization();
+		// languageDetection();
+		tokenization();
         // sentenceDetection();
 		// posTagging();
 		// lemmatization();
@@ -52,7 +53,8 @@ public class OpenNLP {
 
 	private void languageDetection() throws IOException
     {
-		File modelFile = new File(LANG_DETECT_MODEL);
+		//File modelFile = new File(LANG_DETECT_MODEL);
+        File modelFile = new File(TOKENIZER_DE_MODEL);
 		LanguageDetectorModel model = new LanguageDetectorModel(modelFile);
 		LanguageDetectorME detector = new LanguageDetectorME(model);
 
@@ -82,6 +84,10 @@ public class OpenNLP {
 
 	private void tokenization() throws IOException
     {
+        File modelFile = new File(TOKENIZER_MODEL);
+        TokenizerModel model = new TokenizerModel(modelFile);
+        TokenizerME token = new TokenizerME(model);
+
 		String text = "";
 
 		text = "Since cats were venerated in ancient Egypt, they were commonly believed to have been domesticated there, "
@@ -91,6 +97,11 @@ public class OpenNLP {
 		text = "Since cats were venerated in ancient Egypt, they were commonly believed to have been domesticated there, "
 		 + "but there may have been instances of domestication as early as the Neolithic from around 9 500 years ago ( 7 500 BC).";*/
 
+		String[] tokens = token.tokenize(text);
+		double[] propabs = token.getTokenProbabilities();
+		for(int i = 0; i < tokens.length; i++) {
+            System.out.println(tokens[i] + " " + propabs[i]);
+        }
 	}
 
 	private void sentenceDetection() throws IOException
