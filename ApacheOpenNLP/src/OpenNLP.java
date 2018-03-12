@@ -57,9 +57,9 @@ public class OpenNLP {
 		LanguageDetectorME detector = new LanguageDetectorME(model);
 
 		String text = "";
-		//text = "cats";
+		// text = "cats";
 		// text = "cats like milk";
-		 text = "Many cats like milk because in some ways it reminds them of their mother's milk.";
+        // text = "Many cats like milk because in some ways it reminds them of their mother's milk.";
 		// text = "The two things are not really related. Many cats like milk because in
 		// some ways it reminds them of their mother's milk.";
 		/*text = "The two things are not really related. Many cats like milk because in some ways it reminds them of their mother's milk. "
@@ -69,13 +69,15 @@ public class OpenNLP {
 				+ "It is a fortunate quirk of nature that human digestive systems can also digest cow's milk. But humans and cats are not cows.";*/
 		// text = "Many cats like milk because in some ways it reminds them of their
 		// mother's milk. Le lait n'est pas forc�ment mauvais pour les chats";
-		// text = "Many cats like milk because in some ways it reminds them of their
-		// mother's milk. Le lait n'est pas forc�ment mauvais pour les chats. "
-		// + "Der Normalfall ist allerdings der, dass Salonl�wen Milch weder brauchen
-		// noch gut verdauen k�nnen.";
-        Language lang;
-        lang = detector.predictLanguage(text);
-        System.out.println(lang.getLang());
+		text = "Many cats like milk because in some ways it reminds them of their" +
+		 "mother's milk. Le lait n'est pas forc�ment mauvais pour les chats. " +
+		  "Der Normalfall ist allerdings der, dass Salonl�wen Milch weder brauchen" +
+		 "noch gut verdauen k�nnen.";
+        Language[] lang;
+        lang = detector.predictLanguages(text);
+        for(Language lan : lang) {
+            System.out.println(lan.getLang() + " " + lan.getConfidence() );
+        }
     }
 
 	private void tokenization() throws IOException
