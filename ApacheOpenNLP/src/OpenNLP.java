@@ -44,9 +44,10 @@ public class OpenNLP {
 		// languageDetection();
 		// tokenization();
         // sentenceDetection();
-		posTagging();
-		// lemmatization();
-		// stemming();
+		// posTagging();
+		lemmatization();
+		System.out.println("***********************");
+		stemming();
 		// chunking();
 		// nameFinding();
 	}
@@ -134,35 +135,49 @@ public class OpenNLP {
         POSTaggerME taggerME = new POSTaggerME(model);
 
 		String[] sentence = new String[0];
-		sentence = new String[] { "Cats", "like", "milk" };
-		/*sentence = new String[]{"Cat", "is", "white", "like", "milk"};
+		//sentence = new String[] { "Cats", "like", "milk" };
+		//sentence = new String[]{"Cat", "is", "white", "like", "milk"};
 		sentence = new String[] { "Hi", "How", "are", "you", "Welcome", "to", "OpenNLP", "We", "provide", "multiple",
 				"built-in", "methods", "for", "Natural", "Language", "Processing" };
-		sentence = new String[] { "She", "put", "the", "big", "knives", "on", "the", "table" };*/
+		//sentence = new String[] { "She", "put", "the", "big", "knives", "on", "the", "table" };
         String[] sentences = taggerME.tag(sentence);
         double[] propabs = taggerME.probs();
         for(int i = 0; i < sentences.length; i++) {
-            System.out.println(sentences[i] + " " + propabs[i]);
+            System.out.println(sentence[i] + " " + sentences[i] + " " + propabs[i]);
         }
 	}
 
 	private void lemmatization() throws IOException
     {
+		File modelFile = new File(LEMMATIZER_DICT);
+		DictionaryLemmatizer lemmatizer = new DictionaryLemmatizer(modelFile);
+
 		String[] text = new String[0];
-		text = new String[] { "Hi", "How", "are", "you", "Welcome", "to", "OpenNLP", "We", "provide", "multiple",
+		text = new String[] { "asjebnjasbjseabiaes", "Hi", "How", "are", "you", "Welcome", "to", "OpenNLP", "We", "provide", "multiple",
 				"built-in", "methods", "for", "Natural", "Language", "Processing" };
 		String[] tags = new String[0];
-		tags = new String[] { "NNP", "WRB", "VBP", "PRP", "VB", "TO", "VB", "PRP", "VB", "JJ", "JJ", "NNS", "IN", "JJ",
+		tags = new String[] { "NNP", "NNP", "WRB", "VBP", "PRP", "VB", "TO", "VB", "PRP", "VB", "JJ", "JJ", "NNS", "IN", "JJ",
 				"NN", "VBG" };
+
+		String[] words = lemmatizer.lemmatize(text, tags);
+		for(int i = 0; i < words.length; i++) {
+			System.out.println(text[i] + " " + words[i]);
+		}
 
 	}
 
 	private void stemming()
     {
-		String[] sentence = new String[0];
-		sentence = new String[] { "Hi", "How", "are", "you", "Welcome", "to", "OpenNLP", "We", "provide", "multiple",
-				"built-in", "methods", "for", "Natural", "Language", "Processing" };
+		File modelFile = new File(LEMMATIZER_DICT);
+		PorterStemmer stemmer = new PorterStemmer();
 
+		String[] sentence = new String[0];
+		sentence = new String[] {"asjebnjasbjseabiaes", "Hi", "How", "are", "you", "Welcome", "to", "OpenNLP", "We", "provide", "multiple",
+				"built-in", "methods", "for", "Natural", "Language", "Processing" };
+		for(int i = 0; i < sentence.length; i++) {
+			String word = stemmer.stem(sentence[i]);
+			System.out.println(word + " " + sentence[i]);
+		}
 	}
 	
 	private void chunking() throws IOException
