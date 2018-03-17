@@ -30,7 +30,7 @@ public class OpenNLP {
     public static String CHUNKER_MODEL = "models/en-chunker.bin";
     public static String LEMMATIZER_DICT = "models/en-lemmatizer.dict";
     public static String NAME_MODEL = "models/en-ner-person.bin";
-    public static String ENTITY_XXX_MODEL = "models/en-ner-xyz.bin";
+    public static String ENTITY_XXX_MODEL = "models/en-ner-xxx.bin";
 
 	public static void main(String[] args) throws IOException
     {
@@ -200,6 +200,7 @@ public class OpenNLP {
 	private void nameFinding() throws IOException
     {
 		File modelFile = new File(NAME_MODEL);
+		//File modelFile = new File(ENTITY_XXX_MODEL);
 		TokenNameFinderModel model = new TokenNameFinderModel(modelFile);
 		NameFinderME nameFinder = new NameFinderME(model);
 

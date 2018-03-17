@@ -14,3 +14,14 @@ Toolkit for detecting and extracting metadata and text from over a thousand diff
 * Apache Tika provides methods for automatic file type detection.
 * Tika provides support for the most popular metadata formats and tools for defining own
 ones
+
+##Apache Open NLP
+Open source Java library for Natural Language Processing (NLP). It supports the most common NLP tasks such as:
+* tokenization,
+* sentence segmentation,
+* part-of-speech tagging,
+* named entity extraction,
+* chunking,
+* parsing,
+* language detection,
+* coreference resolution,
