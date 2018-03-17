@@ -45,11 +45,10 @@ public class OpenNLP {
 		// tokenization();
         // sentenceDetection();
 		// posTagging();
-		lemmatization();
-		System.out.println("***********************");
-		stemming();
+		// lemmatization();
+		// stemming();
 		// chunking();
-		// nameFinding();
+		nameFinding();
 	}
 
 	private void languageDetection() throws IOException
@@ -182,16 +181,28 @@ public class OpenNLP {
 	
 	private void chunking() throws IOException
     {
+		File modelFile = new File(CHUNKER_MODEL);
+		ChunkerModel model = new ChunkerModel(modelFile);
+		ChunkerME chunker = new ChunkerME(model);
+
 		String[] sentence = new String[0];
 		sentence = new String[] { "She", "put", "the", "big", "knives", "on", "the", "table" };
 
 		String[] tags = new String[0];
 		tags = new String[] { "PRP", "VBD", "DT", "JJ", "NNS", "IN", "DT", "NN" };
 
+		String[] word = chunker.chunk(sentence, tags);
+		for(int i = 0; i < word.length; i++) {
+			System.out.println(word[i] + " " + sentence[i]);
+		}
 	}
 
 	private void nameFinding() throws IOException
     {
+		File modelFile = new File(NAME_MODEL);
+		TokenNameFinderModel model = new TokenNameFinderModel(modelFile);
+		NameFinderME nameFinder = new NameFinderME(model);
+
 		String text = "he idea of using computers to search for relevant pieces of information was popularized in the article "
 				+ "As We May Think by Vannevar Bush in 1945. It would appear that Bush was inspired by patents "
 				+ "for a 'statistical machine' - filed by Emanuel Goldberg in the 1920s and '30s - that searched for documents stored on film. "
@@ -202,6 +213,15 @@ public class OpenNLP {
 				+ "well on small text corpora such as the Cranfield collection (several thousand documents). Large-scale retrieval systems, "
 				+ "such as the Lockheed Dialog system, came into use early in the 1970s.";
 
+		String[] sentence = text.split(" ");
+		Span[] names = nameFinder.find(sentence);
+
+
+		for (Span name: names) {
+			for(int i = name.getStart(); i < name.getEnd(); i++) {
+				System.out.println(sentence[i]);
+			}
+		}
 	}
 
 }
