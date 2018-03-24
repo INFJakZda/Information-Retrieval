@@ -9,3 +9,5 @@ models/
 out*/
 movies/
 *.txt
+*.bin
+*.dict
