@@ -15,7 +15,7 @@ Toolkit for detecting and extracting metadata and text from over a thousand diff
 * Tika provides support for the most popular metadata formats and tools for defining own
 ones
 
-##Apache Open NLP
+## Apache Open NLP
 Open source Java library for Natural Language Processing (NLP). It supports the most common NLP tasks such as:
 * tokenization,
 * sentence segmentation,
