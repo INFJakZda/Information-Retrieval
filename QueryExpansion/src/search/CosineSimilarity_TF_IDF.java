@@ -27,7 +27,8 @@ public class CosineSimilarity_TF_IDF implements ISearch
         // TODO update scores: compute a similarity of each document to the query vector
         // use getCosineSimilarity() method
         // -----------------------------------------------
-
+        for (Document document : _documents)
+            scores.add(new Score(document, getCosineSimilarity(queryVector, document._tf_idf_representation)));
         // -----------------------------------------------
 
         Collections.sort(scores);

@@ -20,15 +20,26 @@ public class Dictionary
 
     public void computeIDFs(ArrayList <Document> documents)
     {
-        // TODO compute idfs values
+        // DONE compute idfs values
+        int size = _terms.size();
+        _idf = new ArrayList <>(size);
+        int counter = 0;
         // 1) iterate over the _terms
-        // 2) check how many documents contain this term (document._terms.contains())
-        // 3) compute idf value (Math.log()) and update _idf vector (add idf value)
-        _idf = new ArrayList <>(_terms.size());
-
-        // -----------------------------------------------
-
-        // -----------------------------------------------
+        for(String term : _terms) {
+            for(Document document: documents) {
+                // 2) check how many documents contain this term (document._terms.contains())
+                if(document._terms.contains(term))
+                    ++counter;
+            }
+            // 3) compute idf value (Math.log()) and update _idf vector (add idf value)
+            if(counter > 0) {
+                _idf.add(Math.log((double)size / (double)counter));
+                //_idf.add(Math.log(counter/size)/Math.log(2));
+            } else {
+                _idf.add(0.0);
+            }
+                counter = 0;
+        }
     }
 
     public void doProcessing(PorterStemmer stemmer, boolean log)

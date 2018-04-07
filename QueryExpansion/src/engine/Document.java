@@ -55,30 +55,36 @@ public class Document
     public void computeVectorRepresentations(Dictionary dictionary, TokenizerME tokenizer, PorterStemmer stemmer)
     {
         String tokenizedAndNormalized[] = getTokenizedAndNormalized(tokenizer, stemmer);
-
-        // TODO compute bow representation
+        int size = dictionary._terms.size();
+        // DONE compute bow representation
+        _bow_representation = new double[size];
         // 1) iterate over tokenizedAndNormalized
-        // 2) check if a dictionary._terms contains a given term
-        // 3) update bag-of-words vector. Use dictionary.termID to get term's position
-        _bow_representation = new double[dictionary._terms.size()];
-        // -----------------------------------------------
+        for(String token : tokenizedAndNormalized) {
+            // 2) check if a dictionary._terms contains a given term
+            if(dictionary._terms.contains(token)) {
+                // 3) update bag-of-words vector. Use dictionary.termID to get term's position
+                _bow_representation[dictionary._termID.get(token)]++;
+            }
+        }
 
-        // -----------------------------------------------
 
-
-        // TODO compute TF representation
+        // DONE compute TF representation
         // use _terms.size() and _bow_representation vector
-        _tf_representation = new double[dictionary._terms.size()];
+        _tf_representation = new double[size];
+        // -----------------------------------------------
+        for(int i = 0; i < size; i++) {
+            _tf_representation[i] = _bow_representation[i] / size;
+        }
         // -----------------------------------------------
 
-        // -----------------------------------------------
 
-
-        // TODO compute tf-idf representation
+        // DONE compute tf-idf representation
         // use _tf_representation vector and dictionary._idf()
-        _tf_idf_representation = new double[dictionary._terms.size()];
+        _tf_idf_representation = new double[size];
         // -----------------------------------------------
-
+        for(int i = 0; i < size; i++) {
+            _tf_idf_representation[i] = _tf_representation[i] * dictionary._idf.get(i);
+        }
         // -----------------------------------------------
 
         /*for (int i = 0; i < _tf_idf_representation.length; i++)

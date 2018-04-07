@@ -63,8 +63,8 @@ public class SearchEngine
         System.out.println("------------------------------------");
         // TODO IMPLEMENT DIFFERENT METHODS FOR SEARCHING
         // uncomment/comment some lines to choose some searching method.
-        ISearch SEARCH_METHOD = new DummySimilarity(_documents);
-        //ISearch SEARCH_METHOD = new CosineSimilarity_TF_IDF(_documents);
+        //ISearch SEARCH_METHOD = new DummySimilarity(_documents);
+        ISearch SEARCH_METHOD = new CosineSimilarity_TF_IDF(_documents);
         //ISearch SEARCH_METHOD = new RelevanceFeedback(_documents, 0.5d, 0.7d, 0.3d,
         //                                   new int[] { 66, 29 }, new int[] { 7, 77 });
         //ISearch SEARCH_METHOD = new QueryExpansion(_dictionary, _documents, _tokenizer, _stemmer);
