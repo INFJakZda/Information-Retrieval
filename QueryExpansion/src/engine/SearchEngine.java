@@ -65,9 +65,9 @@ public class SearchEngine
         // uncomment/comment some lines to choose some searching method.
         //ISearch SEARCH_METHOD = new DummySimilarity(_documents);
         //ISearch SEARCH_METHOD = new CosineSimilarity_TF_IDF(_documents);
-        ISearch SEARCH_METHOD = new RelevanceFeedback(_documents, 0.5d, 0.7d, 0.3d,
-                                           new int[] { 66, 27 }, new int[] { 7, 77 });
-        //ISearch SEARCH_METHOD = new QueryExpansion(_dictionary, _documents, _tokenizer, _stemmer);
+        //ISearch SEARCH_METHOD = new RelevanceFeedback(_documents, 0.5d, 0.7d, 0.3d,
+        //                                   new int[] { 66, 27 }, new int[] { 7, 77 });
+        ISearch SEARCH_METHOD = new QueryExpansion(_dictionary, _documents, _tokenizer, _stemmer);
         //ISearch SEARCH_METHOD = new WordNet(_dictionary, _documents);
 
         System.out.println("Searching using: " + SEARCH_METHOD.getName());

@@ -1,5 +1,6 @@
 package search;
 
+import com.sun.rowset.internal.Row;
 import engine.Dictionary;
 import engine.Document;
 import opennlp.tools.stemmer.PorterStemmer;
@@ -35,30 +36,37 @@ public class QueryExpansion implements ISearch
 
         RealMatrix A = MatrixUtils.createRealMatrix(dictionary._terms.size(), documents.size());
 
-        // TODO compute _correlationMatrix
-        // TODO 1) construct matrix A
+        // DONE compute _correlationMatrix
+        // DONE 1) construct matrix A
         // Notice that a bag-of-words representation of a document
         // is a column of A;
         // derive subsequent bow representations
         // and use setColumnVector() method of A to set the columns.
 
         // -----------------------------------------------------
-
+        for(int i = 0; i < documents.size(); i++) {
+            A.setColumn(i, documents.get(i)._bow_representation);
+        }
         // -----------------------------------------------------
 
-        // TODO 2) normalize matrix A
+        // DONE 2) normalize matrix A
         // Iterate over rows. Use row.getNorm() method which returns a length of a vector.
         // Divide each element of a vector by the length ( newRow = oldRow.mapDivide( length ).
         // update A (setRowVector)
 
         // -----------------------------------------------------
-
+        for(int i = 0; i < A.getData().length; ++i){
+            RealVector oldRow = A.getRowVector(i);
+            double length = oldRow.getNorm();
+            RealVector newRow = oldRow.mapDivide( length );
+            A.setRowVector(i, newRow);
+        }
         // -----------------------------------------------------
 
-        // TODO 3) obtain AT (transposed matrix)
-
-        // TODO 4) set _correlationMatrix = A x AT (multiply)
-        _correlationMatrix = null;
+        // DONE 3) obtain AT (transposed matrix)
+        RealMatrix AT = A.transpose();
+        // DONE 4) set _correlationMatrix = A x AT (multiply)
+        _correlationMatrix = A.multiply(AT);
     }
 
     @Override
@@ -67,13 +75,18 @@ public class QueryExpansion implements ISearch
         // -----------------------------------------------------
         double data[][] = _correlationMatrix.getData();
 
-        // TODO 1) Build a set of unique indexes of terms of a query
+        // DONE 1) Build a set of unique indexes of terms of a query
         // You can iterate over dictionary._terms and use bow representation
         // of a query to verify if a term occurs in the query or not
         // if occurs, add the index of the term to uniqueTerms_Query
         Set <Integer> uniqueTerms_Query = new HashSet <>(_dictionary._terms.size());
         // --------------------------------------------------------
-
+        for(String term: _dictionary._terms){
+            int termId = _dictionary._termID.get(term);
+            if(query._bow_representation[termId] > 0) {
+                uniqueTerms_Query.add(termId);
+            }
+        }
         //-------------------------------------------------------
 
         System.out.print("Original terms: ");
@@ -82,7 +95,7 @@ public class QueryExpansion implements ISearch
         System.out.println("");
         System.out.println("Added terms: ");
 
-        // TODO 2) Build a set of indexes of unique terms which are
+        // DONE 2) Build a set of indexes of unique terms which are
         // correlated with the terms of the query
         // Algorithm:
         Set <Integer> uniqueTerms_ModifiedQuery = new HashSet <>(_dictionary._terms.size());
@@ -94,11 +107,21 @@ public class QueryExpansion implements ISearch
             //      - new term does not occur in uniqueTerms_Query nor in uniqueTerms_ModifiedQuery
             //      - the correlation with the original term is greater than CORRELATION_THRESHOLD
             //      - choose the term with the greatest correlation with the original term
-            double maxCorrelation = -1.0d;
+            double maxCorrelation = CORRELATION_THRESHOLD;
             int index = -1;
-
+            String uniqueTerm = _dictionary._terms.get(i);
             //-------------------------------------------------------
-
+            for (String term: _dictionary._terms) {
+                int termId = _dictionary._termID.get(term);
+                if( !uniqueTerm.equals(term)
+                    && !uniqueTerms_Query.contains(termId)
+                    && !uniqueTerms_ModifiedQuery.contains(termId)
+                    && _correlationMatrix.getEntry(i,termId) > maxCorrelation
+                ) {
+                    maxCorrelation = _correlationMatrix.getEntry(i,termId);
+                    index = termId;
+                }
+            }
             //-------------------------------------------------------
 
             // 3) add the index of the chosen term to uniqueTerms_ModifiedQuery (DONE)
@@ -114,13 +137,18 @@ public class QueryExpansion implements ISearch
 
         // -----------------------------------------------------
         StringBuilder content = new StringBuilder();
-        // TODO 4) Build a new query: construct content string.
+        // DONE 4) Build a new query: construct content string.
         // You need to use keywords instead of terms: use _dicitonary._termsToKeywords map.
         // Build a string content which consists of keywords which match terms
         // (indexes) of uniqueTerms_Query and uniqueTerms_ModifiedQuery.
         // The order of keywords does not matter.
         //-------------------------------------------------------
-
+        for(int id : uniqueTerms_Query){
+            content.append(_dictionary._termsToKeywords.get(_dictionary._terms.get(id))+" ");
+        }
+        for(int id : uniqueTerms_ModifiedQuery){
+            content.append(_dictionary._termsToKeywords.get(_dictionary._terms.get(id))+" ");
+        }
         //-------------------------------------------------------
 
         System.out.println("Content for the modified query = " + content);
