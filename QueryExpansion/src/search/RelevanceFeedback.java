@@ -45,7 +45,7 @@ public class RelevanceFeedback implements ISearch
             System.out.print(String.format("%.2f ", aQueryVector));
         System.out.println("");
 
-        // TODO implement Rocchio method for relevance feedback
+        // DONE implement Rocchio method for relevance feedback
         // use _tf_idf_representation of documents,
         // alpha, betta, and gamma are the weights,
         // relevantDocIDs is the vector of IDs of relevant documents (id = index),
@@ -56,50 +56,42 @@ public class RelevanceFeedback implements ISearch
         double relevantSum = 0;
         double irrelevantSum = 0;
         // -----------------------------------------------
-        for(int j = 0; j < _relevantDocIDs.length; j++) {
-            Document document = _documents.get(_relevantDocIDs[j]);
-            for(double tf_idf : document._tf_idf_representation)
-                relevantSum += tf_idf;
-        }
 
-        for(int j = 0; j < _irrelevantDocIDs.length; j++) {
-            Document document = _documents.get(_irrelevantDocIDs[j]);
-            for(double tf_idf : document._tf_idf_representation)
-                irrelevantSum += tf_idf;
-        }
-
-        for(int i = 0; i < length; i++) {
-            for(int j = 0; j < _relevantDocIDs.length; j++)
-            modifiedQuery[i] = _alpha * queryVector[i] +
-                                _beta * 1 / _relevantDocIDs.length * relevantSum -
-                                _gamma * 1 / _irrelevantDocIDs.length * irrelevantSum;
-
-        }
-        // -----------------------------------------------
-
-        // TODO 2) update the modified query (relevant documents).
+        // DONE 2) update the modified query (relevant documents).
         // 1) iterate over the indexes of the relevant documents
         // 2) derive the vector representation (tf-idf) of a document
         // 3) update the modifiedQuery vector (add, beta weight, divide
         // by the number of relevant documents)
-
         // -----------------------------------------------
-        //for (int relevantDocID : _relevantDocIDs)
-
+        for(int i : _relevantDocIDs){
+            double tmp[] = _documents.get(i)._tf_idf_representation;
+            int len = tmp.length;
+            for(int j = 0; j < len; j++) {
+                relevantSum += tmp[i];
+            }
+        }
         // -----------------------------------------------
 
-
-        // TODO 3)  update the modified query
+        // DONE 3)  update the modified query
         // 1) iterate over the indexes of the irrelevant documents
         // 2) derive the vector representation (tf-idf) of a document
         // 3) update the modifiedQuery vector (substract, gamma weight, divide
         // by the number of irrelevant documents)
-
         // -----------------------------------------------
-        //for (int irrelevantDocID : _irrrelevantDocIDs)
-
+        for(int i : _irrelevantDocIDs){
+            double tmp[] = _documents.get(i)._tf_idf_representation;
+            int len = tmp.length;
+            for(int j = 0; j < len; j++) {
+                irrelevantSum += tmp[i];
+            }
+        }
         // ---------------------------------------------------------
-
+        for(int i = 0; i < length; i++) {
+            modifiedQuery[i] = _alpha * queryVector[i] +
+                    (_beta * relevantSum) / _relevantDocIDs.length  -
+                    (_gamma * irrelevantSum) / _irrelevantDocIDs.length ;
+        }
+        // ---------------------------------------------------------
         System.out.println("Modified TF-IDF representation = ");
         for (double aQueryVector : modifiedQuery)
             System.out.print(String.format("%.2f ", aQueryVector));
