@@ -39,13 +39,18 @@ public class WordNet implements ISearch
     @Override
     public ArrayList <Score> getSortedDocuments(Document query)
     {
-        // TODO 1) Build a set of unique indexes of terms of a query
+        // DONE 1) Build a set of unique indexes of terms of a query
         // You can iterate over dictionary._terms and use bow representation
         // of a query to verify if a term occurs in the query or not
         // if occurs, add the index of the term to uniqueTerms_Query
         Set <Integer> uniqueTerms_Query = new HashSet <>(_dictionary._terms.size());
         //-----------------------------------------------------------
-
+        for(String term: _dictionary._terms){
+            int termId = _dictionary._termID.get(term);
+            if(query._bow_representation[termId] > 0) {
+                uniqueTerms_Query.add(termId);
+            }
+        }
         //-----------------------------------------------------------
 
         System.out.println("Original terms and keywords: ");
@@ -55,40 +60,44 @@ public class WordNet implements ISearch
         System.out.println("");
         System.out.println("Suggesting other keywords: ");
 
-        for (Integer i : uniqueTerms_Query)
+        for (Integer termId : uniqueTerms_Query)
         {
-            String keyword = _dictionary._termsToKeywords.get(_dictionary._terms.get(i));
+            String keyword = _dictionary._termsToKeywords.get(_dictionary._terms.get(termId));
             System.out.println("   for the keyword = " + keyword);
 
-            // try
-            //{
-            // TODO obtain senses of a term (keyword).
-            // These senses are grouped: different groups have different meaning.
-            // 1) use the IndexWord to store base form of a keyword. To derive base form, use
-            // getMorphologicalProcessor() and lookupBaseForm() methods and _wordnetDictionary object.
-            // For the latter method, use POS.NOUN or POS.VERB
-            //-----------------------------------------------------------
-            IndexWord baseForm = null;
-            //-----------------------------------------------------------
-            if (baseForm != null)
-            {
-                // 2) Iterate over groups of senses (getSenses()) - Synsets;
-                // Print each synset .toString(). This info contains a meaning of a group and some examples.
+            try{
+                // DONE obtain senses of a term (keyword).
+                // These senses are grouped: different groups have different meaning.
+                // 1) use the IndexWord to store base form of a keyword. To derive base form, use
+                // getMorphologicalProcessor() and lookupBaseForm() methods and _wordnetDictionary object.
+                // For the latter method, use POS.NOUN or POS.VERB
                 //-----------------------------------------------------------
-
-                // 3) Iterate over words of a synset (getWords()). Print a lemma of a word.
+                    IndexWord baseForm = _wordnetDictionary.getMorphologicalProcessor().lookupBaseForm(POS.NOUN, keyword);
+                    //IndexWord baseForm = _wordnetDictionary.getMorphologicalProcessor().lookupBaseForm(POS.VERB, keyword);
                 //-----------------------------------------------------------
+                if (baseForm != null)
+                {
+                    // 2) Iterate over groups of senses (getSenses()) - Synsets;
+                    // Print each synset .toString(). This info contains a meaning of a group and some examples.
+                    //-----------------------------------------------------------
+                    for(Synset i : baseForm.getSenses()){
+                        System.out.println(i.toString());
+                        for(Word word : i.getWords()){
+                            System.out.println(word.toString() + " ");
+                        }
+                    }
+                    // 3) Iterate over words of a synset (getWords()). Print a lemma of a word.
+                    //-----------------------------------------------------------
 
 
-                //-----------------------------------------------------------
+                    //-----------------------------------------------------------
 
-                //-----------------------------------------------------------
-            }
-
-            /*} catch (JWNLException e)
+                    //-----------------------------------------------------------
+                }
+            } catch (JWNLException e)
             {
                 e.printStackTrace();
-            }*/
+            }
         }
 
         return getSortedDocuments(query._tf_idf_representation);
