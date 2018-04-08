@@ -51,9 +51,30 @@ public class RelevanceFeedback implements ISearch
         // relevantDocIDs is the vector of IDs of relevant documents (id = index),
         // irrelevantDocIDs is the vector of IDs of irrelevant documents (id = index)
         //-----------------------------------------------------------
+        int length = queryVector.length;
         double modifiedQuery[] = new double[queryVector.length];
+        double relevantSum = 0;
+        double irrelevantSum = 0;
         // -----------------------------------------------
+        for(int j = 0; j < _relevantDocIDs.length; j++) {
+            Document document = _documents.get(_relevantDocIDs[j]);
+            for(double tf_idf : document._tf_idf_representation)
+                relevantSum += tf_idf;
+        }
 
+        for(int j = 0; j < _irrelevantDocIDs.length; j++) {
+            Document document = _documents.get(_irrelevantDocIDs[j]);
+            for(double tf_idf : document._tf_idf_representation)
+                irrelevantSum += tf_idf;
+        }
+
+        for(int i = 0; i < length; i++) {
+            for(int j = 0; j < _relevantDocIDs.length; j++)
+            modifiedQuery[i] = _alpha * queryVector[i] +
+                                _beta * 1 / _relevantDocIDs.length * relevantSum -
+                                _gamma * 1 / _irrelevantDocIDs.length * irrelevantSum;
+
+        }
         // -----------------------------------------------
 
         // TODO 2) update the modified query (relevant documents).

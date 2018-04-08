@@ -24,7 +24,7 @@ public class CosineSimilarity_TF_IDF implements ISearch
     public ArrayList <Score> getSortedDocuments(double[] queryVector)
     {
         ArrayList <Score> scores = new ArrayList <>(_documents.size());
-        // TODO update scores: compute a similarity of each document to the query vector
+        // DONE update scores: compute a similarity of each document to the query vector
         // use getCosineSimilarity() method
         // -----------------------------------------------
         for (Document document : _documents)
