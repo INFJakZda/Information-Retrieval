@@ -1,10 +1,10 @@
 import numpy as np
 
-#L1  = [0, 1, 1, 0, 0, 0, 0, 0, 0, 0]
-L1  = [0, 1, 1, 0, 1, 0, 0, 0, 0, 0]
+L1  = [0, 1, 1, 0, 0, 0, 0, 0, 0, 0]
+#L1  = [0, 1, 1, 0, 1, 0, 0, 0, 0, 0]
 L2  = [1, 0, 0, 1, 0, 0, 0, 0, 0, 0]
-#L3  = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-L3  = [0, 1, 0, 0, 0, 0, 1, 0, 0, 0]
+L3  = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+#L3  = [0, 1, 0, 0, 0, 0, 1, 0, 0, 0]
 L4  = [0, 1, 1, 0, 0, 0, 0, 0, 0, 0]
 L5  = [0, 0, 0, 0, 0, 1, 1, 0, 0, 0]
 L6  = [0, 0, 0, 0, 0, 0, 1, 1, 0, 0]
@@ -53,21 +53,17 @@ q = 0.15
 
 pr = np.zeros([10], dtype=float)
 pr = [1/10 for ele in pr]
+
 for t in range(0, ITERATIONS):
     pr_tmp = pr
     for it in range(0, 10):
-        #pr_tmp[it] = q + ((1 - q) * sum([pr[i] * M[it][i] for i in range(0, 10)]))
-        sum_pr = q
-        sum_tmp = 0
-        for Mij in M[it]:
-            sum_tmp += Mij * pr[it]
-        sum_pr += (1 - q) * sum_tmp
-        pr_tmp[it] = sum_pr
+        pr_tmp[it] = q + ((1 - q) * sum([pr[i] * M[it][i] for i in range(0, 10)]))
     pr = pr_tmp
-print(pr)
-print(sum(pr))
-print(pr/sum(pr))
 
+indexes = sorted(range(len(pr)), key=lambda k: pr[k])[::-1]
+pr = np.sort(pr)[::-1]
+for index, p in zip(indexes, pr):
+    print(str(index + 1) + "\t" + str(p / sum(pr)))
     
 ### TODO 3: compute trustrank with damping factor q = 0.15
 ### Documents that are good = 1, 2 (indexes = 0, 1)
@@ -78,8 +74,22 @@ print("TRUSTRANK (DOCUMENTS 1 AND 2 ARE GOOD)")
 q = 0.15
 
 d = np.zeros([10], dtype=float)
+d[0] = 1
+d[1] = 1
+
+d = [ele / sum(d) for ele in d]
 
 tr = [v for v in d]
+
+for t in range(0, ITERATIONS):
+    for it in range(0, 10):
+        tr[it] = (d[it] * q) + ((1 - q) * sum([tr[i] * M[it][i] for i in range(0, 10)]))
+
+
+indexes = sorted(range(len(tr)), key=lambda k: tr[k])[::-1]
+tr = np.sort(tr)[::-1]
+for index, t in zip(indexes, tr):
+    print(str(index + 1) + "\t" + str(t / sum(pr)))
     
 ### TODO 4: Repeat TODO 3 but remove the connections 3->7 and 1->5 (indexes: 2->6, 0->4) 
 ### before computing trustrank
